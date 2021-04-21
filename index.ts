@@ -1,11 +1,11 @@
-import {Application, Router} from "https://deno.land/x/oak/mod.ts";
+import { Application, Router } from 'https://deno.land/x/oak/mod.ts';
 
-import router from "./routes/index.routes.ts";
+import usuarioRouter from './modules/usuario/router.ts';
 
 const app = new Application();
 
-app.use(router.routes());
-app.use(router.allowedMethods());
+app.use(usuarioRouter.routes());
+app.use(usuarioRouter.allowedMethods());
 
-console.log("Server running on port", 4000)
-await app.listen({port: 4000})
+console.log('Server running on port', 5000);
+await app.listen({ port: 5000 });

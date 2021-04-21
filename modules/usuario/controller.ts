@@ -1,5 +1,7 @@
 import { Response, Request, Body } from 'https://deno.land/x/oak/mod.ts';
 import { v4 } from 'https://deno.land/std@0.94.0/uuid/mod.ts';
+import db from '../../db/mongodb.ts';
+import { getAll, addUser } from '../usuario/model.ts';
 
 interface User {
 	id: string;
@@ -30,10 +32,11 @@ export const getUser = ({ params, response }: { params: { id: string }; response
 	}
 };
 
-export const getUsers = ({ response }: { response: Response }) => {
+export const getUsers = async ({ response }: { response: Response }) => {
 	response.body = {
 		message: 'Ok',
-		users
+		users,
+		users_bd: getAll //Traer de la BD
 	};
 };
 
@@ -50,6 +53,8 @@ export const createUser = async ({ request, response }: { request: Request; resp
 		newUser.id = v4.generate();
 		users.push(newUser);
 
+		//Insertar en la BD
+		addUser(newUser.name);
 		response.status = 200;
 		response.body = {
 			message: 'Usuario creado',
@@ -87,5 +92,3 @@ export const updateUser = async ({
 		};
 	}
 };
-
-export const updateUsers = () => {};
