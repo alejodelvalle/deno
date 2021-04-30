@@ -14,7 +14,11 @@ const smtpConfig = {
 export const enviar = async (notificacion: any) => {
 	try {
 		console.log(`Notificación de tipo email creada, enviando mensaje a ${notificacion.email}...`);
-		const linkConfirmacion = `<a href='${config.urlConfirmacion}/${notificacion._id}'>Haga clic para ver la información...</a>`;
+		let linkConfirmacion = `<a href='${config.urlConfirmacion}/${notificacion._id}'>Haga clic para ver la información</a>`;
+		if (notificacion.linkConfirmacion) {
+			linkConfirmacion = notificacion.linkConfirmacion;
+		}
+
 		const mensaje = `${notificacion.contenido}<p>${linkConfirmacion}</p>`;
 		await client.connectTLS(smtpConfig);
 		await client.send({

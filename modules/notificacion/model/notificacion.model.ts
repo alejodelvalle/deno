@@ -16,7 +16,7 @@ export const create = async (notificacion: NotificacionSchema) => {
 	//	notificacion.log = [{ fecha: new Date(), detalle: 'Creación' }];
 
 	if (notificacion.tipo === config.tipos.email) {
-		notificacion.tokenConfirmacion = v4.generate();
+		//notificacion.tokenConfirmacion = v4.generate();
 	}
 	if (validate.esValido) {
 		const insertId = await notificacionSchema.insertOne(notificacion);
