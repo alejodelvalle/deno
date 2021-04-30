@@ -8,15 +8,39 @@ import { bold, cyan, green, yellow } from 'https://deno.land/std@0.94.0/fmt/colo
 
 import { Application } from 'https://deno.land/x/oak/mod.ts';
 
+import { DashportOak } from 'https://deno.land/x/dashport@v1.2.1/mod.ts';
+import { deserializerA, googStrat, serializerA } from './config/dashportConfig.ts';
+
 import usuarioRouter from './modules/usuario/router.ts';
 import notificacionRouter from './modules/notificacion/router/notificacion.router.ts';
-
-//Test MongoDB
-import './db/test.mongodb.ts';
 
 const app = new Application();
 
 //Routes
+
+const dashport = new DashportOak(app);
+
+notificacionRouter.get(
+	'/v1/auth/google',
+	dashport.authenticate(googStrat, serializerA, deserializerA) as any,
+	async (ctx: any, next: any) => {
+		ctx.response.body = 'This is a private page!';
+	}
+);
+
+notificacionRouter.get(
+	'/v1/auth/google/callback',
+	dashport.authenticate(googStrat, serializerA, deserializerA) as any,
+	async (ctx: any, next: any) => {
+		if (ctx.locals instanceof Error) {
+			ctx.response.body = 'An Error occurred!';
+		} else {
+			const displayName = ctx.locals.displayName;
+			ctx.response.body = `Welcome ${displayName}!`;
+		}
+	}
+);
+
 app.use(usuarioRouter.routes());
 app.use(usuarioRouter.allowedMethods());
 app.use(notificacionRouter.routes());
