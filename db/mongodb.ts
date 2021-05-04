@@ -1,10 +1,12 @@
-import { MongoClient } from 'https://deno.land/x/mongo@v0.22.0/mod.ts';
+import { MongoClient } from "../deps.ts";
 
 const config = {
-	uri: `mongodb://${Deno.env.get('DB_HOST')}:${Deno.env.get('DB_PORT')}/${Deno.env.get('DB_NAME')}`,
-	database: Deno.env.get('DB_NAME') || 'saul',
-	user: Deno.env.get('DB_USER'),
-	password: Deno.env.get('DB_PASSWORD')
+  uri: `mongodb://${Deno.env.get("DB_HOST")}:${Deno.env.get(
+    "DB_PORT"
+  )}/${Deno.env.get("DB_NAME")}`,
+  database: Deno.env.get("DB_NAME") || "saul",
+  user: Deno.env.get("DB_USER"),
+  password: Deno.env.get("DB_PASSWORD"),
 };
 
 const client = new MongoClient();
