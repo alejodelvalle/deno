@@ -1,6 +1,6 @@
 import { Response, Request, Body } from "../../../deps.ts";
 import { config } from "../../../config/config.ts";
-import * as notificacionConfig from "../notificacion.config.ts";
+import * as notificacionConfig from "../config/notificacion.config.ts";
 import * as notificacionModel from "../model/notificacion.model.ts";
 
 /**
@@ -61,31 +61,31 @@ export const create = async ({
   if (!request.hasBody) {
     response.status = config.api.status.badRequest.code;
     response.body = { message: config.api.status.badRequest.message };
-  } else {
-    try {
-      const body: Body = await request.body();
-      const notificacion = await body.value;
-      const nuevaNotificacion = await notificacionModel.create(notificacion);
-      if (nuevaNotificacion?.esValido) {
-        response.status = config.api.status.created.code;
-        response.body = {
-          message: config.api.status.created.message,
-          data: nuevaNotificacion.data,
-        };
-      } else {
-        response.status = config.api.status.badRequest.code;
-        response.body = {
-          message: config.api.status.badRequest.message,
-          data: nuevaNotificacion?.data,
-        };
-      }
-    } catch (error) {
-      console.error(error);
-      response.status = config.api.status.InternalServerError.code;
+    return;
+  }
+  try {
+    const body: Body = await request.body();
+    const notificacion = await body.value;
+    const nuevaNotificacion = await notificacionModel.create(notificacion);
+    if (nuevaNotificacion?.esValido) {
+      response.status = config.api.status.created.code;
       response.body = {
-        message: config.api.status.InternalServerError.message,
+        message: config.api.status.created.message,
+        data: nuevaNotificacion.data,
+      };
+    } else {
+      response.status = config.api.status.badRequest.code;
+      response.body = {
+        message: config.api.status.badRequest.message,
+        data: nuevaNotificacion?.data,
       };
     }
+  } catch (error) {
+    console.error(error);
+    response.status = config.api.status.InternalServerError.code;
+    response.body = {
+      message: config.api.status.InternalServerError.message,
+    };
   }
 };
 

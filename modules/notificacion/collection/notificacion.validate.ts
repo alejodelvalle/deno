@@ -9,9 +9,24 @@ import {
   isIn,
   isEmail,
   isNumeric,
+  requiredIf,
 } from "../../../deps.ts";
-import * as authConfig from "../notificacion.config.ts";
-import { NotificacionSchema } from "../schema/notificacion.schema.ts";
+import * as notificacionConfig from "../config/notificacion.config.ts";
+import {
+  notificacionSchema,
+  NotificacionSchema,
+} from "../collection/notificacion.collection.ts";
+import vs from "https://deno.land/x/value_schema/mod.ts";
+
+/**
+ * compara la estructura Json del Objeto notificacion que se recibe con el jsonSchema notificacion definido y devuelve el Objeto en la estrucutra definida
+ * esto permite que no se acepte la entrada de campos adicionales o con una estrucutra invalida
+ * @param {Object} notificacion<NotificacionSchema>
+ * @returns {Object} notificacion<NotificacionVS>
+ */
+export const schema = (notificacion: NotificacionSchema) => {
+  return vs.applySchemaObject(notificacionSchema, notificacion);
+};
 
 /**
  * Valida los campos de un Objeto notificación para su posterior registro
@@ -27,35 +42,37 @@ import { NotificacionSchema } from "../schema/notificacion.schema.ts";
  * @returns {boolean} Objeto.esValido - true o false
  * @returns {boolean} Objeto.errores - {campo: 'detalle del error'}
  */
-export const validateNotificacion = async (
-  notificacion: NotificacionSchema
-) => {
+export const notificacion = async (notificacion: NotificacionSchema) => {
   const rules = {
     titulo: [required, isString],
     tipo: [
       required,
       isString,
       isIn([
-        authConfig.tipos.app,
-        authConfig.tipos.email,
-        authConfig.tipos.sms,
+        notificacionConfig.tipos.app,
+        notificacionConfig.tipos.email,
+        notificacionConfig.tipos.sms,
       ]),
     ],
-    email: [isEmail],
-    telefono: [isNumeric, lengthBetween(10, 10)],
+    email: [requiredIf("tipo", "email"), isEmail],
+    telefono: [requiredIf("tipo", "sms"), isNumeric, lengthBetween(10, 10)],
+    //telefono: [isNumeric, lengthBetween(10, 10)],
     estado: [
       isString,
-      isIn([authConfig.estados.pendiente, authConfig.estados.leida]),
+      isIn([
+        notificacionConfig.estados.pendiente,
+        notificacionConfig.estados.leida,
+      ]),
     ],
     contenido: [required, isString],
     expira: [required, isDate],
   };
-  if (notificacion.tipo === authConfig.tipos.email) {
+  /*  if (notificacion.tipo === notificacionConfig.tipos.email) {
     rules.email.unshift(required);
   }
-  if (notificacion.tipo === authConfig.tipos.sms) {
+  if (notificacion.tipo === notificacionConfig.tipos.sms) {
     rules.telefono.unshift(required);
-  }
+  }*/
   const [esValido, error] = await validate(notificacion, rules, {
     messages: {
       "titulo.required": "El titulo es requerido",
@@ -86,7 +103,7 @@ export const validateNotificacion = async (
   return { esValido, errores };
 };
 
-export const validateNotificacionId = async (notificacion: { _id: string }) => {
+export const id = async (notificacion: { _id: string }) => {
   const [esValido, error] = await validate(
     notificacion,
     {

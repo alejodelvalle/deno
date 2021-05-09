@@ -1,4 +1,5 @@
 import db from "../../../db/mongodb.ts";
+import vs from "https://deno.land/x/value_schema/mod.ts";
 
 export interface NotificacionSchema {
   _id: { $oid: string };
@@ -19,6 +20,17 @@ export interface NotificacionSchema {
   ];
 }
 
-const notificacionSchema = db.collection<NotificacionSchema>("notificacion");
+export const notificacionSchema = {
+  // schema for input
+  titulo: vs.string(),
+  tipo: vs.string(),
+  email: vs.string({ ifUndefined: "" }),
+  telefono: vs.string({ ifUndefined: "" }),
+  contenido: vs.string(),
+  linkConfirmacion: vs.string(),
+  expira: vs.string(),
+};
 
-export default notificacionSchema;
+export const notificacionCollection = db.collection<NotificacionSchema>(
+  "notificacion"
+);

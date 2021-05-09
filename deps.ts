@@ -35,6 +35,7 @@ export {
   isIn,
   isEmail,
   isNumeric,
+  requiredIf,
 } from "https://deno.land/x/validasaur/mod.ts";
 export type { InvalidParams } from "https://deno.land/x/validasaur/mod.ts";
 export { Router } from "https://deno.land/x/oak/mod.ts";

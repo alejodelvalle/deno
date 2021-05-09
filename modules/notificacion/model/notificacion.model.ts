@@ -1,12 +1,10 @@
 import { Bson } from "../../../deps.ts";
-import * as authConfig from "../notificacion.config.ts";
-import notificacionSchema, {
-  NotificacionSchema,
-} from "../schema/notificacion.schema.ts";
+import * as notificacionConfig from "../config/notificacion.config.ts";
 import {
-  validateNotificacion,
-  validateNotificacionId,
-} from "./notificacion.validate.ts";
+  notificacionCollection,
+  NotificacionSchema,
+} from "../collection/notificacion.collection.ts";
+import * as notificacionValidate from "../collection/notificacion.validate.ts";
 import * as emailClient from "./notificacion.email.ts";
 
 /**
@@ -16,19 +14,16 @@ import * as emailClient from "./notificacion.email.ts";
  */
 
 export const create = async (notificacion: NotificacionSchema) => {
-  const validate = await validateNotificacion(notificacion);
-  notificacion.estado = authConfig.estados.pendiente;
+  const notificacionValido: any = notificacionValidate.schema(notificacion);
+  const validate = await notificacionValidate.notificacion(notificacionValido);
+  notificacionValido.estado = notificacionConfig.estados.pendiente;
   //	notificacion.log = [{ fecha: new Date(), detalle: 'Creación' }];
-
-  if (notificacion.tipo === authConfig.tipos.email) {
-    //notificacion.tokenConfirmacion = v4.generate();
-  }
   if (validate.esValido) {
-    const insertId = await notificacionSchema.insertOne(notificacion);
-    const nuevaNotificacion = await notificacionSchema.findOne({
+    const insertId = await notificacionCollection.insertOne(notificacionValido);
+    const nuevaNotificacion = await notificacionCollection.findOne({
       _id: insertId,
     });
-    if (notificacion.tipo === authConfig.tipos.email) {
+    if (nuevaNotificacion?.tipo === notificacionConfig.tipos.email) {
       emailClient.enviar(nuevaNotificacion);
     }
     return {
@@ -49,9 +44,9 @@ export const create = async (notificacion: NotificacionSchema) => {
  */
 
 export const getById = async (_id: string) => {
-  const validate = await validateNotificacionId({ _id });
+  const validate = await notificacionValidate.id({ _id });
   if (validate.esValido) {
-    const notificacion = await notificacionSchema.findOne({
+    const notificacion = await notificacionCollection.findOne({
       _id: new Bson.ObjectId(_id),
     });
     if (notificacion) {
@@ -79,23 +74,22 @@ export const getById = async (_id: string) => {
  */
 
 export const getAll = async () => {
-  return await notificacionSchema.find({ titulo: { $ne: null } }).toArray();
+  return await notificacionCollection.find({ titulo: { $ne: null } }).toArray();
 };
 
 /**
  * Actualiza el estado de una notificación
- * @param _id
+ * @param {string} _id
  */
-
 export const updateEstado = async (
   _id: string,
   estado: string,
   modificacion: string,
   origen: string
 ) => {
-  const validate = await validateNotificacionId({ _id });
+  const validate = await notificacionValidate.id({ _id });
   if (validate.esValido) {
-    const notificacion: any = await notificacionSchema.findOne({
+    const notificacion: any = await notificacionCollection.findOne({
       _id: new Bson.ObjectId(_id),
     });
 
@@ -110,19 +104,22 @@ export const updateEstado = async (
         matchedCount,
         modifiedCount,
         upsertedId,
-      } = await notificacionSchema.updateOne({ _id: new Bson.ObjectId(_id) }, [
-        {
-          $set: {
-            log: log,
-            estado: estado,
-            ultimaModificacion: "$$NOW",
+      } = await notificacionCollection.updateOne(
+        { _id: new Bson.ObjectId(_id) },
+        [
+          {
+            $set: {
+              log: log,
+              estado: estado,
+              ultimaModificacion: "$$NOW",
+            },
           },
-        },
-      ]);
+        ]
+      );
       console.log(
         `${matchedCount} registro encontrado, ${modifiedCount} registro modificado`
       );
-      const updatedNotificacion = await notificacionSchema.findOne({
+      const updatedNotificacion = await notificacionCollection.findOne({
         _id: new Bson.ObjectId(_id),
       });
       return {

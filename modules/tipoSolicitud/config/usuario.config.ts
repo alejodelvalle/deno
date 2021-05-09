@@ -1,3 +1,5 @@
+//Definicion de constantes globales del modulo usuario
+
 export const googleAuth = {
   client_id:
     "841165938689-727m2d44010puf3ud03j8j3lp73brq38.apps.googleusercontent.com",
