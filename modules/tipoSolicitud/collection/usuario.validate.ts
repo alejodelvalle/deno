@@ -73,24 +73,24 @@ export const usuario = async (
 };
 
 /**
- * Valida el campo _id de un Objeto usuario
+ * Valida el campo id de un Objeto usuario
  * @param {Object} usuario - el usuario a validar
- * @param {string} usuario._id - el _id del usuario
+ * @param {string} usuario.id - el id del usuario
  *
  * @returns {Object} Objeto - resultado de la validación
  * @returns {boolean} Objeto.esValido - true o false
- * @returns {boolean} Objeto.errores - {_id: 'detalle del error'}
+ * @returns {boolean} Objeto.errores - {id: 'detalle del error'}
  */
-export const _id = async (usuario: { _id: string }) => {
+export const id = async (usuario: { id: string }) => {
   const [esValido, error] = await validate(
     usuario,
     {
-      _id: [required, isString, lengthBetween(24, 24)],
+      id: [required, isString, lengthBetween(24, 24)],
     },
     {
       messages: {
-        "_id.required": "El id es requerido",
-        "_id.lengthBetween": "El id no es valido",
+        "id.required": "El id es requerido",
+        "id.lengthBetween": "El id no es valido",
       },
     }
   );

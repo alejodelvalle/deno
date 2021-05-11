@@ -20,9 +20,9 @@ export type { Body } from "https://deno.land/x/oak/mod.ts";
 export { oakCors } from "https://deno.land/x/cors/mod.ts";
 export { DashportOak } from "https://deno.land/x/dashport@v1.2.1/mod.ts";
 export {
-  create,
-  verify,
-  getNumericDate,
+  create as jwtCreate,
+  verify as jwtVerify,
+  getNumericDate as jwtGetNumericDate,
 } from "https://deno.land/x/djwt@v2.2/mod.ts";
 export { MongoClient, Bson } from "https://deno.land/x/mongo@v0.22.0/mod.ts";
 export {

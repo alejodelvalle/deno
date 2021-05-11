@@ -1,5 +1,5 @@
 import { Context } from "../deps.ts";
-import { verify } from "../deps.ts";
+import { jwtVerify } from "../deps.ts";
 import { config } from "../config/config.ts";
 
 /**
@@ -41,7 +41,7 @@ export async function jwtAuth(
   }
 
   // Verificar si el token es válido
-  if (!(await verify(jwt, jwtConfig.secretKey, jwtConfig.alg))) {
+  if (!(await jwtVerify(jwt, jwtConfig.secretKey, jwtConfig.alg))) {
     ctx.response.status = config.api.status.authorizationRequired.code;
     ctx.response.body = {
       message: `${config.api.status.authorizationRequired.message}, jwt invalido`,
@@ -57,7 +57,7 @@ export async function jwtAuth(
   ctx: Context<Record<string, any>>,
   next: () => Promise<void>
 ) {
-  
+
   // Get the token from the request
   const token = ctx.request.headers
     .get(jwtConfig.header)

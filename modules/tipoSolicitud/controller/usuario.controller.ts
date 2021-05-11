@@ -148,7 +148,7 @@ export const iniciarSesion = async ({
         };
         return;
       }
-      const jwt = await usuarioModel.generarJWT(usuarioExiste.data._id);
+      const jwt = await usuarioModel.generarJWT(usuarioExiste.data.id);
       cookies.set("jwt", jwt, { httpOnly: true });
 
       const { password, ...usuarioResponse } = usuarioExiste.data;
@@ -210,9 +210,9 @@ export const registrarse = async ({
       linkConfirmacion: `<a href='http://localhost:8000/v1/usuario/confirmar-registro/${usuarioResponse.codigoConfirmacion}'>Confirmar registro</a>`,
       contenido: `Señor(a)
           ${usuarioResponse.nombre} ${usuarioResponse.apellido}
-          
+
           Le informamos que la solicitud de registro para su cuenta de usuario en nuestra plataforma, ha sido procesada exitosamente.
-          
+
           Para prevenir el abuso de este sitio, se requiere que active su cuenta haciendo clic en el siguiente enlace
 
           Gracias de nuevo por estar con nosotros.`,
@@ -311,7 +311,7 @@ export const getMe = async ({
 }) => {
   const jwt = cookies.get("jwt") || "";
   const payload: any = await verify(jwt, jwtConfig.secretKey, jwtConfig.alg);
-  const usuario = await usuarioModel.getById(payload._id);
+  const usuario = await usuarioModel.getById(payload.id);
   if (!usuario.esValido) {
     response.status = config.api.status.badRequest.code;
     response.body = {

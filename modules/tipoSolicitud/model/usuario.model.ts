@@ -1,12 +1,17 @@
 import { config } from "../../../config/config.ts";
 import * as usuarioConfig from "../config/usuario.config.ts";
-//import { create, getNumericDate } from "../../../deps.ts";
-import * as jwtDeps from "../../../deps.ts";
 import * as usuarioModel from "../../usuario/model/usuario.model.ts";
 import { jwtConfig } from "../../../middlewares/jwt.ts";
 
-import { Bson, v4 } from "../../../deps.ts";
-import { genSalt, hash, compare } from "../../../deps.ts";
+import {
+  genSalt,
+  hash,
+  compare,
+  jwtCreate,
+  jwtGetNumericDate,
+  Bson,
+  v4,
+} from "../../../deps.ts";
 import {
   usuarioCollection,
   UsuarioSchema,
@@ -91,23 +96,23 @@ export const createUpsert = async (usuario: UsuarioSchema) => {
 };
 
 /**
- * obtener usuario por _id
- * @param _id
+ * obtener usuario por id
+ * @param id
  * @returns usuario
  */
 
-export const getById = async (_id: string) => {
-  const validate = await usuarioValidate._id({ _id });
+export const getById = async (id: string) => {
+  const validate = await usuarioValidate.id({ id });
   if (validate.esValido) {
     const { password, ...usuario }: any = await usuarioCollection.findOne({
-      _id: new Bson.ObjectId(_id),
+      _id: new Bson.ObjectId(id),
     });
     if (usuario) {
       return {
         esValido: validate.esValido,
         data: {
           ...usuario,
-          creacion: new Bson.ObjectId(_id).getTimestamp(),
+          creacion: new Bson.ObjectId(id).getTimestamp(),
         },
       };
     }
@@ -369,13 +374,13 @@ export async function getGoogleProfile(accessToken: string) {
 /**
  *Genera el JWT
  *
- * @param {string} _id
+ * @param {string} id
  * @return {*}
  */
-export const generarJWT = async (_id: string) => {
-  return await jwtDeps.create(
+export const generarJWT = async (id: string) => {
+  return await jwtCreate(
     { alg: jwtConfig.alg, typ: jwtConfig.type },
-    { _id: _id, exp: jwtDeps.getNumericDate(jwtConfig.expirationTime) },
+    { id: id, exp: jwtGetNumericDate(jwtConfig.expirationTime) },
     config.jwt.secret
   );
 };

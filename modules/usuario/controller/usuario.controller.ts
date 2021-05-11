@@ -1,16 +1,8 @@
-import {
-  Response,
-  Request,
-  Cookies,
-  helpers,
-  Body,
-  v4,
-} from "../../../deps.ts";
+import { Response, Request, Cookies, Body, jwtVerify } from "../../../deps.ts";
 import { config } from "../../../config/config.ts";
 import * as usuarioModel from "../model/usuario.model.ts";
 import * as notificacionModel from "../../notificacion/model/notificacion.model.ts";
 import { jwtConfig } from "../../../middlewares/jwt.ts";
-import { verify } from "../../../deps.ts";
 
 /**
  * genera la URL de autenticacion de Google
@@ -150,13 +142,12 @@ export const iniciarSesion = async ({
       }
       const jwt = await usuarioModel.generarJWT(usuarioExiste.data._id);
       cookies.set("jwt", jwt, { httpOnly: true });
-
-      const { password, ...usuarioResponse } = usuarioExiste.data;
+      //const { password, ...usuarioResponse } = usuarioExiste.data;
 
       response.status = config.api.status.ok.code;
       response.body = {
         message: config.api.status.ok.message,
-        data: usuarioResponse,
+        data: { jwt },
       };
     } catch (error) {
       console.error(error);
@@ -210,9 +201,9 @@ export const registrarse = async ({
       linkConfirmacion: `<a href='http://localhost:8000/v1/usuario/confirmar-registro/${usuarioResponse.codigoConfirmacion}'>Confirmar registro</a>`,
       contenido: `Señor(a)
           ${usuarioResponse.nombre} ${usuarioResponse.apellido}
-          
+
           Le informamos que la solicitud de registro para su cuenta de usuario en nuestra plataforma, ha sido procesada exitosamente.
-          
+
           Para prevenir el abuso de este sitio, se requiere que active su cuenta haciendo clic en el siguiente enlace
 
           Gracias de nuevo por estar con nosotros.`,
@@ -310,7 +301,7 @@ export const getMe = async ({
   cookies: Cookies;
 }) => {
   const jwt = cookies.get("jwt") || "";
-  const payload: any = await verify(jwt, jwtConfig.secretKey, jwtConfig.alg);
+  const payload: any = await jwtVerify(jwt, jwtConfig.secretKey, jwtConfig.alg);
   const usuario = await usuarioModel.getById(payload._id);
   if (!usuario.esValido) {
     response.status = config.api.status.badRequest.code;

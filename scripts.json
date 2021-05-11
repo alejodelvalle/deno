@@ -3,7 +3,7 @@
 
   "scripts": {
     "start": {
-      "cmd": "deno run server.ts",
+      "cmd": "deno run --config .vscode/tsconfig.json server.ts",
       "desc": "run the main server.",
       "allow": ["net", "env", "read", "write"],
       "unstable": true

@@ -1,12 +1,18 @@
 import { config } from "../../../config/config.ts";
 import * as usuarioConfig from "../config/usuario.config.ts";
 //import { create, getNumericDate } from "../../../deps.ts";
-import * as jwtDeps from "../../../deps.ts";
 import * as usuarioModel from "../../usuario/model/usuario.model.ts";
 import { jwtConfig } from "../../../middlewares/jwt.ts";
 
-import { Bson, v4 } from "../../../deps.ts";
-import { genSalt, hash, compare } from "../../../deps.ts";
+import {
+  Bson,
+  v4,
+  genSalt,
+  hash,
+  compare,
+  jwtCreate,
+  jwtGetNumericDate,
+} from "../../../deps.ts";
 import {
   usuarioCollection,
   UsuarioSchema,
@@ -373,9 +379,9 @@ export async function getGoogleProfile(accessToken: string) {
  * @return {*}
  */
 export const generarJWT = async (_id: string) => {
-  return await jwtDeps.create(
+  return await jwtCreate(
     { alg: jwtConfig.alg, typ: jwtConfig.type },
-    { _id: _id, exp: jwtDeps.getNumericDate(jwtConfig.expirationTime) },
+    { _id: _id, exp: jwtGetNumericDate(jwtConfig.expirationTime) },
     config.jwt.secret
   );
 };

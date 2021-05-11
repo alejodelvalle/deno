@@ -105,13 +105,6 @@ tipoSolicitudRouter.get("/v1/tipo-solicitud", ctx => {
         },
       },
     ],
-    initialValues: {
-      direccion: "",
-      duracion: "",
-      tipoValla: "",
-      visita: "",
-      poliza: "",
-    },
   };
 });
 
