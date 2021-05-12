@@ -1,3 +1,0 @@
-[submodule "modules/notificacion"]
-	path = modules/notificacion
-	url = https://github.com/alejodelvalle/deno-notificacion.git
