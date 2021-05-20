@@ -10,7 +10,7 @@ import { DashportOak } from "./deps.ts";
 
 import usuarioRouter from "./modules/usuario/router/usuario.router.ts";
 import notificacionRouter from "./modules/notificacion/router/notificacion.router.ts";
-import tipoSolicitudRouter from "./modules/tipoSolicitud/router/tipoSolicitud.router.ts";
+import procedimientoRouter from "./modules/procedimiento/router/procedimiento.router.ts";
 
 const app = new Application();
 const dashport = new DashportOak(app);
@@ -46,8 +46,8 @@ app.use(usuarioRouter.routes());
 app.use(usuarioRouter.allowedMethods());
 app.use(notificacionRouter.routes());
 app.use(notificacionRouter.allowedMethods());
-app.use(tipoSolicitudRouter.routes());
-app.use(tipoSolicitudRouter.allowedMethods());
+app.use(procedimientoRouter.routes());
+app.use(procedimientoRouter.allowedMethods());
 /*
 app.use(ctx => {
   ctx.response.body = "SAUL API Sever: No existe la ruta";
