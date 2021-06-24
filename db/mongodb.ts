@@ -5,8 +5,6 @@ const config = {
     "DB_PORT"
   )}/${Deno.env.get("DB_NAME")}`,
   database: Deno.env.get("DB_NAME") || "saul",
-  user: Deno.env.get("DB_USER"),
-  password: Deno.env.get("DB_PASSWORD"),
 };
 
 const client = new MongoClient();

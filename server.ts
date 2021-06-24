@@ -6,18 +6,18 @@ import "https://deno.land/x/dotenv/load.ts";
 import { bold, cyan, green, yellow } from "./deps.ts";
 import { Application } from "./deps.ts";
 import { oakCors } from "./deps.ts";
-import { DashportOak } from "./deps.ts";
+//import { DashportOak } from "./deps.ts";
 
 import usuarioRouter from "./modules/usuario/router/usuario.router.ts";
 import notificacionRouter from "./modules/notificacion/router/notificacion.router.ts";
 import procedimientoRouter from "./modules/procedimiento/router/procedimiento.router.ts";
 
 const app = new Application();
-const dashport = new DashportOak(app);
+//const dashport = new DashportOak(app);
 
 app.use(
   oakCors({
-    origin: /^.+localhost:(3000|4000|5000)$/,
+    origin: /^.+localhost:(3000|3001|4000|5000)$/,
     credentials: true,
   })
 );
